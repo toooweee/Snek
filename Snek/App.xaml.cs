@@ -2,6 +2,8 @@
 using System.Data;
 using System.Windows;
 using Snek.Data;
+using Snek.ViewModels;
+using Snek.Views;
 
 namespace Snek;
 
@@ -13,7 +15,10 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
-        var dbContext = new AppDbContext();
+        using var dbContext = new AppDbContext();
         dbContext.Database.EnsureCreated();
+        Seeder.SeedAll(dbContext);
+        var loginWindow = new LoginWindow();
+        loginWindow.Show();
     }
 }

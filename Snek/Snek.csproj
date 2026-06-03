@@ -36,4 +36,15 @@
       <Resource Include="Resources\Icon.ico" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Resources\user_import.xlsx" />
+      <Content Include="Resources\user_import.xlsx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Resources\Tovar.xlsx" />
+      <Content Include="Resources\Tovar.xlsx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>
