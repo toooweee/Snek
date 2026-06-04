@@ -7,13 +7,154 @@
         xmlns:converters="clr-namespace:Snek.Converters"
         mc:Ignorable="d"
         Title="AdminWindow" Height="450" Width="800">
-    
+
     <Window.Resources>
-        <converters:ImagePathConverter x:Key="ImageConv"/>
-        <converters:ProductBackgroundConverter x:Key="BgConv"/>
-        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <converters:ImagePathConverter x:Key="ImageConv" />
+        <converters:ProductBackgroundConverter x:Key="BgConv" />
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
     </Window.Resources>
+
     <Grid Margin="20">
-        <Grid.RowDefinitions></Grid.RowDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0">
+            <Image Source="/Resources/Icon.png" Height="40" DockPanel.Dock="Left" />
+            <Button Content="Выйти" Padding="10,5" Width="100" DockPanel.Dock="Right" Command="{Binding LogoutCommand}" />
+            <TextBlock Text="{Binding CurrentUserFio}" DockPanel.Dock="Right" VerticalAlignment="Center"
+                       TextAlignment="Right" Margin="20,0" />
+        </DockPanel>
+
+        <Grid Grid.Row="1" Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Column="0"
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                     Padding="5"
+                     Tag="Поиск..." />
+
+            <ComboBox Grid.Column="1"
+                      ItemsSource="{Binding Suppliers}"
+                      SelectedItem="{Binding SelectedSupplier}"
+                      DisplayMemberPath="Name"
+                      Margin="10,0,0,0" MinWidth="160" Padding="5" />
+
+            <ComboBox Grid.Column="2"
+                      SelectedIndex="{Binding SelectedSortIndex}"
+                      Margin="10,0,0,0" MinWidth="200" Padding="5">
+                <ComboBoxItem Content="Без сортировки" />
+                <ComboBoxItem Content="Количество ↑" />
+                <ComboBoxItem Content="Количество ↓" />
+            </ComboBox>
+
+            <Button Grid.Column="3"
+                    Content="Добавить товар"
+                    Margin="10,0,0,0" Padding="10,5" />
+        </Grid>
+
+        <ListBox Grid.Row="2"
+                 Margin="0,10,0,0"
+                 ItemsSource="{Binding Products}"
+                 HorizontalContentAlignment="Stretch"
+                 BorderThickness="1">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderBrush="Gray" BorderThickness="1" Margin="2" Padding="10" CornerRadius="3">
+                        <Border.Background>
+                            <MultiBinding Converter="{StaticResource BgConv}">
+                                <Binding Path="Stock" />
+                                <Binding Path="CurrentDiscount" />
+                            </MultiBinding>
+                        </Border.Background>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130" />  <!-- фото -->
+                                <ColumnDefinition Width="*" />    <!-- свойства -->
+                                <ColumnDefinition Width="130" />  <!-- скидка -->
+                            </Grid.ColumnDefinitions>
+
+                            <Border Grid.Column="0"
+                                    BorderBrush="DarkGray" BorderThickness="1"
+                                    Background="White">
+                                <Image Source="{Binding Image, Converter={StaticResource ImageConv}}"
+                                       Stretch="Uniform" Margin="3" />
+                            </Border>
+
+                            <!-- 2. СВОЙСТВА -->
+                            <StackPanel Grid.Column="1" Margin="10,0">
+                                <!-- Категория | Наименование (жирным) -->
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Category.Name}" FontWeight="Bold" />
+                                    <TextBlock Text=" | " FontWeight="Bold" />
+                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" />
+                                </StackPanel>
+
+                                <TextBlock Text="{Binding Description}" TextWrapping="Wrap" />
+
+                                <TextBlock>
+                                    <Run Text="Производитель: " />
+                                    <Run Text="{Binding Manufacturer.Name}" />
+                                </TextBlock>
+                                <TextBlock>
+                                    <Run Text="Поставщик: " />
+                                    <Run Text="{Binding Supplier.Name}" />
+                                </TextBlock>
+
+                                <!-- Цена со скидкой -->
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Цена: " />
+                                    <TextBlock Text="{Binding Price, StringFormat={}{0:N2} ₽}">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding HasDiscount}" Value="True">
+                                                        <Setter Property="TextDecorations" Value="Strikethrough" />
+                                                        <Setter Property="Foreground" Value="Red" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBlock Text="{Binding FinalPrice, StringFormat={}{0:N2} ₽}"
+                                               Margin="8,0,0,0"
+                                               Foreground="Black"
+                                               Visibility="{Binding HasDiscount, Converter={StaticResource BoolToVis}}" />
+                                </StackPanel>
+
+                                <TextBlock>
+                                    <Run Text="Единица измерения: " />
+                                    <Run Text="{Binding UnitMeasure.Name}" />
+                                </TextBlock>
+                                <TextBlock>
+                                    <Run Text="Количество на складе: " />
+                                    <Run Text="{Binding Stock}" />
+                                </TextBlock>
+                            </StackPanel>
+
+                            <Border Grid.Column="2"
+                                    BorderBrush="DarkGray" BorderThickness="1"
+                                    Background="White">
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <TextBlock Text="Действующая" HorizontalAlignment="Center" />
+                                    <TextBlock Text="скидка" HorizontalAlignment="Center" Margin="0,0,0,5" />
+                                    <TextBlock Text="{Binding CurrentDiscount, StringFormat={}{0}%}"
+                                               FontSize="22" FontWeight="Bold"
+                                               HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </Window>
