@@ -1,4 +1,6 @@
-﻿namespace Snek.Models;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
+
+namespace Snek.Models;
 
 public class Product
 {
@@ -18,4 +20,7 @@ public class Product
     public int Stock { get; set; }
     public string Description { get; set; } = null!;
     public string Image { get; set; } = null!;
+
+    public decimal FinalPrice => Math.Round(Price * (1 - CurrentDiscount / 100m), 2);
+    public bool HasDiscount => CurrentDiscount > 0;
 }

@@ -1,6 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Windows;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Snek.Data;
+using Snek.Views;
 
 namespace Snek.ViewModels;
 
@@ -27,7 +30,24 @@ public partial class LoginViewModel : ObservableObject
             return;
         }
 
-        ErrorMessage = "Входите!";
+        switch (user.Role.Name)
+        {
+            case "Администратор":
+                var adminWindow = new AdminWindow(user);
+                adminWindow.Show();
+                Application.Current.Windows[0]?.Close();
+                break;
+            case "Менеджер":
+                
+                Application.Current.Windows[0]?.Close();
+                break;
+            case "Авторизированный клиент":
+                Application.Current.Windows[0]?.Close();
+                break;
+            default:
+                ErrorMessage = "Невалидная роль!";
+                return;
+        }
     }
 
     [RelayCommand]

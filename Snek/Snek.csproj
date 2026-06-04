@@ -34,6 +34,30 @@
     <ItemGroup>
       <None Remove="Resources\Icon.ico" />
       <Resource Include="Resources\Icon.ico" />
+      <None Remove="Resources\10.jpg" />
+      <Resource Include="Resources\10.jpg" />
+      <None Remove="Resources\9.jpg" />
+      <Resource Include="Resources\9.jpg" />
+      <None Remove="Resources\picture.png" />
+      <Resource Include="Resources\picture.png" />
+      <None Remove="Resources\8.jpg" />
+      <Resource Include="Resources\8.jpg" />
+      <None Remove="Resources\7.jpg" />
+      <Resource Include="Resources\7.jpg" />
+      <None Remove="Resources\6.jpg" />
+      <Resource Include="Resources\6.jpg" />
+      <None Remove="Resources\5.jpg" />
+      <Resource Include="Resources\5.jpg" />
+      <None Remove="Resources\4.jpg" />
+      <Resource Include="Resources\4.jpg" />
+      <None Remove="Resources\3.jpg" />
+      <Resource Include="Resources\3.jpg" />
+      <None Remove="Resources\1.jpg" />
+      <Resource Include="Resources\1.jpg" />
+      <None Remove="Resources\2.jpg" />
+      <Resource Include="Resources\2.jpg" />
+      <None Remove="Resources\Icon.png" />
+      <Resource Include="Resources\Icon.png" />
     </ItemGroup>
 
     <ItemGroup>

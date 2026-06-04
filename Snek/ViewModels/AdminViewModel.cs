@@ -1,6 +1,9 @@
-﻿namespace Snek.ViewModels;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Snek.Models;
 
-public class AdminViewModel
+namespace Snek.ViewModels;
+
+public class AdminViewModel: ObservableObject
 {
-    
+    public AdminViewModel(User user) {}
 }
