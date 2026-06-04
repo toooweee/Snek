@@ -12,6 +12,10 @@ public class AppDbContext : DbContext
     public DbSet<Supplier> Suppliers { get; set; } = null!; 
     public DbSet<UnitMeasure> UnitMeasures { get; set; } = null!; 
     public DbSet<Product> Products { get; set; } = null!; 
+    public DbSet<PickupPoint> PickupPoints => Set<PickupPoint>();
+    public DbSet<OrderStatus> OrderStatuses => Set<OrderStatus>();
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

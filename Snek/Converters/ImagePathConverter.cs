@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.IO;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
@@ -6,31 +7,36 @@ namespace Snek.Converters;
 
 public class ImagePathConverter : IValueConverter
 {
-    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        var filename = value as string;
+        var path = value as string;
 
-        if (string.IsNullOrEmpty(filename))
+        if (string.IsNullOrWhiteSpace(path))
+            return LoadFromResources("picture.png");
+
+        // Если путь начинается с "UserImages/" — это загруженная админом фотка на диске.
+        if (path.StartsWith("UserImages", StringComparison.OrdinalIgnoreCase))
         {
+            var full = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
+            if (File.Exists(full))
+                return LoadFromDisk(full);
             return LoadFromResources("picture.png");
         }
         
-        var img = LoadFromResources(filename);
-        return img ?? LoadFromResources("picture.png");
+        if (Path.IsPathRooted(path) && File.Exists(path))
+            return LoadFromDisk(path);
+
+        // Иначе пробуем как ресурсную картинку.
+        return LoadFromResources(path) ?? LoadFromResources("picture.png");
     }
 
-    private static BitmapImage? LoadFromResources(string filename)
+    private static BitmapImage? LoadFromResources(string fileName)
     {
         try
         {
-            var uri = new Uri($"pack://application:,,,/Resources/{filename}", UriKind.Absolute);
-            var bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-            bitmap.UriSource = uri;
-            bitmap.EndInit();
-            bitmap.Freeze();
-            return bitmap;
+            var uri = new Uri($"pack://application:,,,/Resources/Images/{fileName}",
+                UriKind.Absolute);
+            return CreateBitmap(uri);
         }
         catch
         {
@@ -38,8 +44,22 @@ public class ImagePathConverter : IValueConverter
         }
     }
 
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    private static BitmapImage LoadFromDisk(string fullPath)
     {
-        throw new NotImplementedException();
+        return CreateBitmap(new Uri(fullPath, UriKind.Absolute));
     }
+
+    private static BitmapImage CreateBitmap(Uri uri)
+    {
+        var bmp = new BitmapImage();
+        bmp.BeginInit();
+        bmp.CacheOption = BitmapCacheOption.OnLoad;
+        bmp.UriSource = uri;
+        bmp.EndInit();
+        bmp.Freeze();
+        return bmp;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => throw new NotImplementedException();
 }

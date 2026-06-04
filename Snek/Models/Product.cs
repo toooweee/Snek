@@ -20,6 +20,7 @@ public class Product
     public int Stock { get; set; }
     public string Description { get; set; } = null!;
     public string Image { get; set; } = null!;
+    public virtual List<OrderItem> OrderItems { get; set; } = new();
 
     public decimal FinalPrice => Math.Round(Price * (1 - CurrentDiscount / 100m), 2);
     public bool HasDiscount => CurrentDiscount > 0;
